@@ -8,7 +8,7 @@ module.exports = {
     },
 
     frameguard: {
-        action: "deny"
+        action: "sameorigin"
     },
 
     referrerPolicy: {
