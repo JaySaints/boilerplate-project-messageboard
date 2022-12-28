@@ -3,11 +3,12 @@ require('dotenv').config();
 const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
-const helmet = require('helmet')
+const helmet = require('helmet');
 
 const apiRoutes = require('./routes/api.js');
 const fccTestingRoutes = require('./routes/fcctesting.js');
 const runner = require('./test-runner');
+const helemetOptions = require('./helemet-options.js');
 
 const app = express();
 
@@ -19,31 +20,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // Security Policy
-app.use(helmet.contentSecurityPolicy({
-  directives: {
-    defaultSrc: ["'self'", "https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"],
-    scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
-    styleSrc: ["'self'"]
-  }
-}));
-
-app.use(helmet.frameguard({
-  action: "deny"
-}));
-
-app.use(helmet.noSniff());
-
-app.use(
-  helmet.referrerPolicy({
-    policy: ["same-origin", "no-referrer-when-downgrade"],
-  })
-);
-
-app.use(
-  helmet.dnsPrefetchControl({
-    allow: false,
-  })
-);
+app.use(helmet(helemetOptions))
 
 //Sample front-end
 app.route('/b/:board/')
