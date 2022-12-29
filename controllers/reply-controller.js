@@ -1,26 +1,48 @@
-const threadModel = require('../models/thread-model');
+const ThreadModel = require('../models/thread-model');
 const { generate_hash, validate_hash } = require('./hash-controller');
 
+//############### CREATE ###############\\
 async function create(req, res, next) {
     const { text, thread_id, delete_password} = req.body;
     const hashPassword = await generate_hash(delete_password);
 
     console.log({ text, thread_id, delete_password});
-    const result = await threadModel.updateOne({_id: thread_id},{$push: {replies: {
+    const result = await ThreadModel.updateOne({_id: thread_id},{$push: {replies: {
         text,
         delete_password: hashPassword
     }}});
     res.json({result})
 }
 
+//############### UPDATE ###############\\
 async function update(req, res, next) {
+    const { thread_id, reply_id } = req.body;
+
+    const thread = await ThreadModel.findOne({"_id": thread_id, "replies._id": reply_id}, {replies:1});
+
+    if(thread == null) {
+        res.send("Thread or Reply not exist!");
+        return
+    } 
     
+    try {
+        await ThreadModel.updateOne(
+            {"_id": thread_id, "replies._id": reply_id},
+            {$set: {"replies.$.reported": true}}
+        );
+        res.status(200).send("reported");
+    } catch (e) {
+        res.send("Anything is wrong!");
+        console.error(e)
+    }
 }
 
+//############### VIEW ###############\\
 async function view(req, res, next) {
     
 }
 
+//############### DESTROY ###############\\
 async function destroy(req, res, next) {
     const { thread_id, reply_id, delete_password } = req.body;
 
@@ -30,7 +52,7 @@ async function destroy(req, res, next) {
         return
     }  
 
-    const thread = await threadModel.findOne({"_id": thread_id, "replies._id": reply_id}, {replies:1});
+    const thread = await ThreadModel.findOne({"_id": thread_id, "replies._id": reply_id}, {replies:1});
 
     if(thread == null) {
         res.send("Thread or Reply not exist!");
@@ -49,7 +71,7 @@ async function destroy(req, res, next) {
 
     if (validatePassowrd) {
         try {
-            await threadModel.updateOne(
+            await ThreadModel.updateOne(
                 { // where
                     "_id": thread_id, 
                     "replies._id": reply_id
@@ -58,15 +80,14 @@ async function destroy(req, res, next) {
                         "replies.$.text": "[deleted]"
                     }
                 }
-            );
-            
+            );            
             res.status(200).send("success"); 
 
         } catch (e) {
             console.error(e)
             res.send("Anything is wrong!");
-            return
         }
+        return
     }
 
     res.status(200).send("incorrect password"); 
