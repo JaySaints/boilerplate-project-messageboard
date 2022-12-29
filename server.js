@@ -22,6 +22,9 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Security Policy
 app.use(helmet(helemetOptions))
 
+// Start Connection Database
+require('./models/connect-db').start();
+
 //Sample front-end
 app.route('/b/:board/')
   .get(function(req, res) {
@@ -53,14 +56,14 @@ app.use(function(req, res, next) {
 
 //Start our server and tests!
 const listener = app.listen(process.env.PORT || 3000, function() {
-  console.log('Your app is listening on port ' + listener.address().port);
+  console.log('\u2705 Your app is listening on port ' + listener.address().port);
   if (process.env.NODE_ENV === 'test') {
     console.log('Running Tests...');
     setTimeout(function() {
       try {
         runner.run();
       } catch (e) {
-        console.log('Tests are not valid:');
+        console.log('\u26D4 Tests are not valid:');
         console.error(e);
       }
     }, 1500);
