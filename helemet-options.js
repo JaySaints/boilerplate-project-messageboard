@@ -1,9 +1,9 @@
 module.exports = {
     contentSecurityPolicy:{
         directives: {
-          defaultSrc: ["'self'", "https://cdn.freecodecamp.org/universal/favicons/favicon-32x32.png"],
-          scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js"],
-          styleSrc: ["'self'"]
+          defaultSrc: ["'self'", "http:", "https:", "data:", "blob:"],
+          scriptSrc: ["'self'", "https://code.jquery.com/jquery-2.2.1.min.js", "'unsafe-inline'", "'unsafe-eval'"],
+          styleSrc: ["'self'", "'unsafe-inline'"],
         }
     },
 
