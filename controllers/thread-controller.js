@@ -53,14 +53,14 @@ async function destroy(req, res, next) {
     if (validatePassowrd) {
         try {
             await threadModel.findByIdAndDelete(thread_id);
-            console.log()
+            res.status(200).send("success");    
         } catch (e) {
             console.error(e)
             res.send("Error in delete thread");
         }
     }
     
-    res.status(200).send(validatePassowrd ? "success" : "incorrect password");    
+    res.status(200).send("incorrect password");    
 }
 
 module.exports = {
