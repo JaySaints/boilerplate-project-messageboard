@@ -1,6 +1,6 @@
-const threadModel = require('../models/thread-model');
+const ThreadModel = require('../models/thread-model');
 const { generate_hash, validate_hash } = require('./hash-controller');
-
+//############### CREATE ###############\\
 async function create(req, res, next) {
     const {text, delete_password, board} = req.body
 
@@ -8,7 +8,7 @@ async function create(req, res, next) {
     console.log({text, delete_password, hashPassword, board})
 
     try {
-        const newThread = new threadModel({
+        const newThread = new ThreadModel({
             board,
             text,
             delete_password: hashPassword
@@ -24,14 +24,33 @@ async function create(req, res, next) {
     }
 }
 
+//############### UPDATE ###############\\
 async function update(req, res, next) {
+    const { thread_id } = req.body;
+
+    const thread  = await ThreadModel.findOne({_id: thread_id});
     
+    if (thread == null) {
+        res.status(200).send("Thread not found!");
+        return
+    }
+
+    try {
+        await ThreadModel.updateOne({"_id": thread_id}, {$set: {"reported": true}});
+        res.status(200).send("reported")    
+
+    } catch (e) {
+        console.error(e);
+        res.send("Error in delete thread");
+    }
 }
 
+//############### VIEW ###############\\
 async function view(req, res, next) {
     
 }
 
+//############### DELETE ###############\\
 async function destroy(req, res, next) {
     const { thread_id, delete_password } = req.body;
     
@@ -41,7 +60,7 @@ async function destroy(req, res, next) {
         return
     }    
 
-    const thread = await threadModel.findOne({_id: thread_id});
+    const thread = await ThreadModel.findOne({_id: thread_id});
 
     if (thread == null) {
         res.status(200).send("Thread not found!");
@@ -52,12 +71,13 @@ async function destroy(req, res, next) {
 
     if (validatePassowrd) {
         try {
-            await threadModel.findByIdAndDelete(thread_id);
+            await ThreadModel.findByIdAndDelete(thread_id);
             res.status(200).send("success");    
         } catch (e) {
             console.error(e)
-            res.send("Error in delete thread");
+            res.send("Error to delete thread");
         }
+        return
     }
     
     res.status(200).send("incorrect password");    
