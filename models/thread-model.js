@@ -3,12 +3,12 @@ const mongoose = require('mongoose');
 const ThreadSchmea = mongoose.Schema({
     board: {type: String},
     text: {type: String},
-    delete_password: {type: String},
+    delete_password: {type: String, required: true},
     reported: {type: Boolean, default: false},
     replies: [
         {
             text: {type: String},
-            delete_password : {type: String},
+            delete_password : {type: String, required: true},
             reported: {type: Boolean, default: false},     
             created_on: {type: Date, default: Date.now}    
             
