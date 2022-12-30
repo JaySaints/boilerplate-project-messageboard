@@ -49,12 +49,12 @@ async function update(req, res, next) {
 
 //############### VIEW ###############\\
 async function view(req, res, next) {
-    const board = (req.originalUrl.split('/')[3]).toLowerCase()
-    
+    const setBoard = (req.originalUrl.split('/')[3]).toLowerCase()
+
     var threads = await ThreadModel.aggregate([
         {
-            $match: {board: {$eq: board}}
-        },{
+            $match: { board: { $eq: setBoard } }
+        }, {
             $sort: { "bumped_on": -1 }
         }, {
             $limit: 10
