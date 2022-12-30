@@ -84,7 +84,6 @@
         
         $('#boardDisplay').on('submit','#reportThread', function(e) {
           var url = "/api/threads/"+currentBoard;
-          console.log({here: $(this).serialize()})
           $.ajax({
             type: "PUT",
             url: url,
